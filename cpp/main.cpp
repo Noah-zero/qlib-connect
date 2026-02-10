@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <cstring>
 #include <iostream>
+#include "order_intent.h"
 
 int main() {
     int fd = open("/tmp/qlib_shm", O_RDWR);
@@ -23,9 +24,17 @@ int main() {
     }
 
     while (true) {
-        int value;
-        std::memcpy(&value, shm, sizeof(int));
-        std::cout << "C++ read:" << value << std::endl;
+        OrderIntent oi;
+        std::memcpy(&oi, shm, sizeof(OrderIntent));
+
+        std::cout<< "C++ read OrderIntend: "
+            << "ts=" << oi.ts_ns
+            << ", inst=" << oi.insrument
+            << ", qty=" << oi.qty
+            << ", price= " << oi.price
+            << ", side=" << (oi.side == Side::BUY ? "BUY" : "SELL")
+            << std::endl;
+        
         sleep(1);
     }
 }
